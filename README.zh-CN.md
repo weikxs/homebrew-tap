@@ -10,6 +10,7 @@
 | 工具 | 简介 | 最新版本 | 平台 | 安装 |
 |---|---|---|---|---|
 | [GitPersona](https://github.com/weikxs/gitpersona) | 跟着目录自动切换的 Git 身份：提交、推送、`gh` 和 `glab` 自动使用当前目录对应的账户 | [![release](https://img.shields.io/github/v/release/weikxs/gitpersona?label=)](https://github.com/weikxs/gitpersona/releases/latest) | macOS、Linux | `brew install weikxs/tap/gitpersona` |
+| [OTPKeep](https://github.com/weikxs/otpkeep) | 常驻菜单栏、注重隐私的两步验证器（TOTP、HOTP、Steam）：点一下或按一个快捷键就有验证码，账号只留在你自己的设备上 | [![release](https://img.shields.io/github/v/release/weikxs/otpkeep?label=)](https://github.com/weikxs/otpkeep/releases/latest) | macOS | `brew install --cask weikxs/tap/otpkeep` |
 
 ## 安装
 
@@ -26,7 +27,7 @@ brew tap weikxs/tap
 brew install gitpersona
 ```
 
-Homebrew 会自动选择适合你机器的版本（Apple 芯片或 Intel 的 Mac，x86_64 或 arm64 的 Linux）。
+Homebrew 会自动选择适合你机器的版本（Apple 芯片或 Intel 的 Mac，x86_64 或 arm64 的 Linux）。OTPKeep 是图形应用：Homebrew 在 macOS 上安装它（同一个 App 同时支持 Apple 芯片和 Intel）；Linux 请用它的安装脚本。
 
 ## GitPersona
 
@@ -61,11 +62,44 @@ brew uninstall gitpersona
 **不用 Homebrew：** 运行 `curl -fsSL https://raw.githubusercontent.com/weikxs/gitpersona/main/install.sh | sh`，
 在 macOS 和 Linux 上安装同一个版本。
 
+## OTPKeep
+
+**安装：**
+
+```sh
+brew install --cask weikxs/tap/otpkeep
+```
+
+然后从启动台或"应用程序"打开 OTPKeep，它常驻在菜单栏。其他用法见
+[OTPKeep 的 README](https://github.com/weikxs/otpkeep/blob/main/README.zh-CN.md)。
+
+**升级：**
+
+```sh
+brew update && brew upgrade --cask otpkeep
+```
+
+**卸载：** 先退出 OTPKeep（菜单栏图标 → 退出），再运行：
+
+```sh
+brew uninstall --cask otpkeep
+```
+
+卸载不会删除你的账号：它们留在 `~/Library/Application Support/OTPKeep`。如果以后可能还要用，请先导出加密备份；
+确定不要了，再删除这个目录。
+
+**关于 macOS 版：** 目前还没有苹果签名。软件包安装后会去掉隔离标记，所以第一次打开时 macOS 不会拒绝运行。详见 OTPKeep 的
+[SECURITY.md](https://github.com/weikxs/otpkeep/blob/main/SECURITY.md)。
+
+**不用 Homebrew：** `curl -fsSL https://raw.githubusercontent.com/weikxs/otpkeep/main/install.sh | sh` 在 macOS
+和 Linux 上安装同一个版本（Linux 上是 `.deb`、`.rpm` 或 AppImage）。
+
 ## 故障排查
 
 | 问题 | 处理方法 |
 |---|---|
 | `Error: Unexpected method 'postflight_steps'` | 你的 Homebrew 版本太旧：先运行 `brew update`，再重新安装 |
+| macOS 提示"无法打开 OTPKeep"或"已损坏" | 用 `brew reinstall --cask otpkeep` 重新安装；或自己去掉标记：`xattr -dr com.apple.quarantine /Applications/OTPKeep.app` |
 | 新版本刚发布，`brew upgrade` 却提示已是最新 | 刷新 tap：`brew update` |
 | macOS 提示“gitpersona 已损坏，无法打开” | 用 `brew reinstall gitpersona` 重装；或者手动去掉隔离标记：`xattr -d com.apple.quarantine "$(command -v gitpersona)"` |
 | 安装后找不到 `gitpersona` 命令 | 确认 Homebrew 的 `bin` 目录在 `PATH` 中（`brew doctor` 会告诉你怎么设置） |
@@ -73,14 +107,14 @@ brew uninstall gitpersona
 
 ## 这个 tap 如何维护
 
-- 每个软件包都是一个 [Cask](https://docs.brew.sh/Cask-Cookbook)，在工具发布新版本时由发布流程（[GoReleaser](https://goreleaser.com)）
-  自动写入；请不要手动修改 `Casks/*.rb`。
-- 每个软件包都指向该工具 GitHub Release 中的压缩包，并用 SHA-256 校验。
+- 每个软件包都是一个 [Cask](https://docs.brew.sh/Cask-Cookbook)，在工具发布新版本时由它的发布流程自动写入
+  （GitPersona 用 [GoReleaser](https://goreleaser.com)，OTPKeep 用自己的发布流程）；请不要手动修改 `Casks/*.rb`。
+- 每个软件包都指向该工具 GitHub Release 中的压缩包或磁盘镜像，并用 SHA-256 校验。
 - 每个工具用自己的部署密钥发布，该密钥只能写入这个仓库。
 
 ## 问题反馈
 
-请在对应工具自己的仓库里提 issue，例如 [weikxs/gitpersona](https://github.com/weikxs/gitpersona/issues)。
+请在对应工具自己的仓库里提 issue，例如 [weikxs/gitpersona](https://github.com/weikxs/gitpersona/issues) 或 [weikxs/otpkeep](https://github.com/weikxs/otpkeep/issues)。
 
 ## 许可证
 
