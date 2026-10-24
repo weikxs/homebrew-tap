@@ -21,10 +21,10 @@ brew install <tool>
 
 | Tool | What it is | Platforms |
 |---|---|---|
-| [gitpersona](https://github.com/weikxs/gitpersona) | Git profiles that follow your directories | macOS (coming with the first release) |
+| [gitpersona](https://github.com/weikxs/gitpersona) | Git profiles that follow your directories | macOS, Linux (coming with the first release) |
 
-Packages are casks for macOS, written by each tool's release automation; do not edit them by hand.
-On Linux, install the tools from their release pages or with `go install`, as each project's README explains.
+Packages are casks written by each tool's release automation; do not edit them by hand. Each tool publishes with its
+own deploy key, so one tool's release cannot be mistaken for another's.
 
 ## Problems
 

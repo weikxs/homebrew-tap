@@ -21,10 +21,9 @@ brew install <工具名>
 
 | 工具 | 简介 | 平台 |
 |---|---|---|
-| [gitpersona](https://github.com/weikxs/gitpersona) | 跟着目录自动切换的 Git 身份 | macOS（第一个正式版本发布后可用） |
+| [gitpersona](https://github.com/weikxs/gitpersona) | 跟着目录自动切换的 Git 身份 | macOS、Linux（第一个正式版本发布后可用） |
 
-这里的软件包是 macOS 用的 Cask，由各工具的发布流程自动写入，请不要手动修改。
-Linux 上请从各项目的 Release 页面下载，或用 `go install` 安装，具体见各项目的 README。
+这里的软件包是 Cask，由各工具的发布流程自动写入，请不要手动修改。每个工具用自己的部署密钥发布，互不影响。
 
 ## 问题反馈
 
