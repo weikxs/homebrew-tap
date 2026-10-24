@@ -2,30 +2,89 @@
 
 **English** | [简体中文](README.zh-CN.md)
 
-[Homebrew](https://brew.sh) packages for the tools published by [weikxs](https://github.com/weikxs).
-
-## Install
-
-```sh
-brew install weikxs/tap/<tool>
-```
-
-or tap once, then install by name:
-
-```sh
-brew tap weikxs/tap
-brew install <tool>
-```
+[Homebrew](https://brew.sh) packages for the tools published by [weikxs](https://github.com/weikxs), for macOS
+(Apple silicon and Intel) and Linux (x86_64 and arm64).
 
 ## Tools
 
-| Tool | What it is | Platforms |
-|---|---|---|
-| [gitpersona](https://github.com/weikxs/gitpersona) | Git profiles that follow your directories | macOS, Linux (coming with the first release) |
+| Tool | What it is | Latest | Platforms | Install |
+|---|---|---|---|---|
+| [GitPersona](https://github.com/weikxs/gitpersona) | Git profiles that follow your directories: commits, pushes, `gh` and `glab` use the account that belongs to the folder you are in | [![release](https://img.shields.io/github/v/release/weikxs/gitpersona?label=)](https://github.com/weikxs/gitpersona/releases/latest) | macOS, Linux | `brew install weikxs/tap/gitpersona` |
 
-Packages are casks written by each tool's release automation; do not edit them by hand. Each tool publishes with its
-own deploy key, so one tool's release cannot be mistaken for another's.
+## Install
 
-## Problems
+Install a tool directly; Homebrew adds this tap by itself:
 
-Open an issue in the tool's own repository.
+```sh
+brew install weikxs/tap/gitpersona
+```
+
+Or add the tap once, then install by name:
+
+```sh
+brew tap weikxs/tap
+brew install gitpersona
+```
+
+Homebrew picks the right build for your machine (Apple silicon or Intel Mac, Linux x86_64 or arm64).
+
+## GitPersona
+
+**Install and check it:**
+
+```sh
+brew install weikxs/tap/gitpersona
+gitpersona version
+```
+
+**Set it up:** sign in to each GitHub account once with `gh auth login`, then run `gitpersona setup --web`. See the
+[GitPersona README](https://github.com/weikxs/gitpersona#readme) for everything else.
+
+**Upgrade:**
+
+```sh
+brew update && brew upgrade gitpersona
+```
+
+**Uninstall:** first let GitPersona remove its block from your Git configuration and put back the `includeIf` rules it
+took over, then remove the package:
+
+```sh
+gitpersona uninstall
+brew uninstall gitpersona
+```
+
+Your profiles stay in `~/.config/gitpersona`; delete that folder too if you do not want them any more.
+
+**About the macOS binary:** it is not signed by Apple yet. The package removes the quarantine flag after installing,
+so macOS does not show "gitpersona is damaged and cannot be opened". Details are in GitPersona's
+[SECURITY.md](https://github.com/weikxs/gitpersona/blob/main/SECURITY.md).
+
+**Without Homebrew:** `curl -fsSL https://raw.githubusercontent.com/weikxs/gitpersona/main/install.sh | sh`
+installs the same release on macOS and Linux.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `Error: Unexpected method 'postflight_steps'` | Your Homebrew is older than the package format: `brew update`, then install again |
+| `brew upgrade` says it is already up to date right after a release | Refresh the tap: `brew update` |
+| macOS says "gitpersona is damaged and cannot be opened" | Reinstall with `brew reinstall gitpersona`; or remove the flag yourself: `xattr -d com.apple.quarantine "$(command -v gitpersona)"` |
+| `gitpersona` is not found after installing | Make sure Homebrew's `bin` is on your `PATH` (`brew doctor` says how) |
+| Another `gitpersona` runs instead | An older copy comes first on `PATH`: `which -a gitpersona`, then remove the old one |
+
+## How this tap is maintained
+
+- Each package is a [cask](https://docs.brew.sh/Cask-Cookbook) written by the tool's release automation
+  ([GoReleaser](https://goreleaser.com)) when a version is released; do not edit `Casks/*.rb` by hand.
+- Every package points at the archives of the tool's GitHub release and checks them by SHA-256.
+- Each tool publishes with its own deploy key, which can write only to this repository.
+
+## Problems and feedback
+
+Open an issue in the tool's own repository, such as
+[weikxs/gitpersona](https://github.com/weikxs/gitpersona/issues).
+
+## License
+
+[MIT](LICENSE)
