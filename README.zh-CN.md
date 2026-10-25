@@ -83,10 +83,26 @@ curl -fsSL https://raw.githubusercontent.com/weikxs/otpkeep/main/install.sh | sh
 `gitpersona uninstall` 会先从 Git 配置里删掉 GitPersona 写入的那一段，并恢复它接管过的 `includeIf` 规则。OTPKeep 的账号任何时候
 都不会被自动删除：如果以后可能还要用，请先导出加密备份；确定不要了，再删除那个目录。
 
-## macOS 版暂未签名
+## macOS 版没有 Apple 签名
 
-两个工具目前都还没有苹果签名。Homebrew 和安装脚本会在安装后去掉隔离标记，所以第一次运行时 macOS 不会拒绝。如果你手动下载文件，
-请先用 `checksums.txt` 核对，并在"系统设置 → 隐私与安全性"里允许一次。详见
+两个工具的 macOS 版**都没有用 Apple 开发者证书（Developer ID）签名，也没有经过 Apple 公证，今后也不打算签名。**
+它们由 GitHub Actions 从公开的源码构建，每个文件的 SHA-256 都列在发布页的 `checksums.txt` 里。没有签名不影响工具的任何功能，
+只是 macOS 无法确认是谁做的，所以第一次打开下载来的文件时，可能提示"Apple 无法验证其是否包含恶意软件"，或者"已损坏，无法打开"。
+
+**用 Homebrew 或安装脚本安装的：什么都不用做。** 两者都会先核对校验值，再去掉 macOS 给下载文件加的隔离标记，打开时不会被拦截。
+
+**手动下载的，或者 macOS 仍然拦截：** 先确认文件就是发布的那个——`shasum -a 256 <文件>` 打印的值必须和 `checksums.txt`
+里这个文件那一行相同。然后允许一次：
+
+| | GitPersona（命令行程序） | OTPKeep（应用） |
+|---|---|---|
+| 1. 先运行一次 | 在终端运行 `gitpersona version`。macOS 拦截时点**完成**（不要点**移到废纸篓**） | 从磁盘镜像把 `OTPKeep.app` 拖进"应用程序"再打开。macOS 拦截时点**完成** |
+| 2. 允许 | 打开**系统设置 → 隐私与安全性**，滚动到**安全性**：在"已阻止使用 gitpersona"旁点**仍要打开**，输入登录密码 | 打开**系统设置 → 隐私与安全性**，滚动到**安全性**：在"已阻止使用 OTPKeep"旁点**仍要打开**，输入登录密码 |
+| 3. 再运行 | 再运行一次 `gitpersona version`，选择**打开** | 再打开一次 OTPKeep，选择**打开** |
+| 或者在终端里一步完成（代替 1–3） | `xattr -d com.apple.quarantine "$(command -v gitpersona)"` | `xattr -dr com.apple.quarantine /Applications/OTPKeep.app` |
+
+macOS 会记住你对这份文件的选择；只有以后手动换成新版本时才需要再做一次。macOS 14 及更早的版本也可以在访达里按住 Control
+点按应用，选择**打开**；macOS 15 起只能用**仍要打开**。详见
 [GitPersona 的 SECURITY.md](https://github.com/weikxs/gitpersona/blob/main/SECURITY.md) ·
 [OTPKeep 的 SECURITY.md](https://github.com/weikxs/otpkeep/blob/main/SECURITY.md)。
 
@@ -96,7 +112,7 @@ curl -fsSL https://raw.githubusercontent.com/weikxs/otpkeep/main/install.sh | sh
 |---|---|
 | `Error: Unexpected method 'postflight_steps'` | 你的 Homebrew 版本太旧：先运行 `brew update`，再重新安装 |
 | 新版本刚发布，`brew upgrade` 却提示已是最新 | 刷新 tap：`brew update` |
-| macOS 提示"gitpersona 已损坏，无法打开" | `brew reinstall gitpersona`，或自己去掉标记：`xattr -d com.apple.quarantine "$(command -v gitpersona)"` |
+| macOS 提示无法打开 gitpersona，或"已损坏" | `brew reinstall gitpersona`，或自己去掉标记：`xattr -d com.apple.quarantine "$(command -v gitpersona)"` |
 | macOS 提示"无法打开 OTPKeep"或"已损坏" | `brew reinstall --cask otpkeep`，或自己去掉标记：`xattr -dr com.apple.quarantine /Applications/OTPKeep.app` |
 | 安装后找不到 `gitpersona` 命令 | 用 Homebrew 装的：确认 Homebrew 的 `bin` 目录在 `PATH` 中（`brew doctor` 会告诉你怎么设置）。用脚本装的：打开一个新终端，或运行脚本打印的那行 `export PATH=…` |
 | 运行的是另一个旧的 `gitpersona` | 旧版本在 `PATH` 中排在前面：用 `which -a gitpersona` 找到后删掉旧的 |

@@ -87,12 +87,30 @@ Options go after `sh -s --`, for example `curl -fsSL …/install.sh | sh -s -- -
 rules it took over. Nothing ever deletes OTPKeep's accounts: export an encrypted backup first if you might need them,
 then delete that folder if you do not want them any more.
 
-## macOS builds are not signed yet
+## macOS: not signed by Apple
 
-Neither tool is signed by Apple yet. Homebrew and the install scripts remove the quarantine flag after installing,
-so macOS does not refuse to run them the first time. If you download a file by hand, check it against
-`checksums.txt` and allow it once in System Settings → Privacy & Security. Details:
-[GitPersona's SECURITY.md](https://github.com/weikxs/gitpersona/blob/main/SECURITY.md) ·
+The macOS builds of both tools are **not signed with an Apple Developer ID and not notarized by Apple, and we do
+not plan to sign them.** They are built by GitHub Actions from the public source, and every file is listed with its
+SHA-256 in the release's `checksums.txt`. Being unsigned does not change what the tools do; it only means macOS
+cannot tell who made them, so the first time you open a downloaded copy it may say that Apple "could not verify it
+is free of malware", or that it "is damaged and can't be opened".
+
+**Installed with Homebrew or an install script: nothing to do.** Both check the checksum, then remove the
+quarantine flag macOS puts on downloaded files, so the tools open normally.
+
+**Downloaded by hand, or macOS still refuses:** first make sure the file is the one that was released —
+`shasum -a 256 <file>` must print the same value as the file's line in `checksums.txt`. Then allow it once:
+
+| | GitPersona (a command-line program) | OTPKeep (an app) |
+|---|---|---|
+| 1. Try once | Run `gitpersona version` in Terminal. When macOS refuses, click **Done** (not **Move to Trash**) | Copy `OTPKeep.app` from the disk image into Applications and open it. When macOS refuses, click **Done** |
+| 2. Allow | **System Settings → Privacy & Security**, scroll to **Security**: next to "gitpersona was blocked", click **Open Anyway** and enter your password | **System Settings → Privacy & Security**, scroll to **Security**: next to "OTPKeep was blocked", click **Open Anyway** and enter your password |
+| 3. Run again | Run `gitpersona version` again and choose **Open** | Open OTPKeep again and choose **Open** |
+| Or in Terminal, instead of 1–3 | `xattr -d com.apple.quarantine "$(command -v gitpersona)"` | `xattr -dr com.apple.quarantine /Applications/OTPKeep.app` |
+
+macOS remembers the choice for that copy; do it again only after you replace it by hand with a new version. On
+macOS 14 and earlier you can also Control-click the app in Finder and choose **Open**; macOS 15 and later only
+offer **Open Anyway**. More in [GitPersona's SECURITY.md](https://github.com/weikxs/gitpersona/blob/main/SECURITY.md) ·
 [OTPKeep's SECURITY.md](https://github.com/weikxs/otpkeep/blob/main/SECURITY.md).
 
 ## Troubleshooting
@@ -101,7 +119,7 @@ so macOS does not refuse to run them the first time. If you download a file by h
 |---|---|
 | `Error: Unexpected method 'postflight_steps'` | Your Homebrew is older than the package format: `brew update`, then install again |
 | `brew upgrade` says it is already up to date right after a release | Refresh the tap: `brew update` |
-| macOS says "gitpersona is damaged and cannot be opened" | `brew reinstall gitpersona`, or remove the flag yourself: `xattr -d com.apple.quarantine "$(command -v gitpersona)"` |
+| macOS says "gitpersona" cannot be opened or is damaged | `brew reinstall gitpersona`, or remove the flag yourself: `xattr -d com.apple.quarantine "$(command -v gitpersona)"` |
 | macOS says "OTPKeep cannot be opened" or that it is damaged | `brew reinstall --cask otpkeep`, or remove the flag yourself: `xattr -dr com.apple.quarantine /Applications/OTPKeep.app` |
 | `gitpersona` is not found after installing | With Homebrew: make sure Homebrew's `bin` is on your `PATH` (`brew doctor` says how). With the script: open a new terminal, or run the `export PATH=…` line it printed |
 | Another `gitpersona` runs instead | An older copy comes first on `PATH`: `which -a gitpersona`, then remove the old one |
