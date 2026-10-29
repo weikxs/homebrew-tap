@@ -1,7 +1,7 @@
 # This file is written by OTPKeep's release workflow (scripts/release/homebrew-cask.sh). DO NOT EDIT.
 cask "otpkeep" do
-  version "0.1.0"
-  sha256 "052c61c55985bab25f6f22236cf75baeec02e5b1f4cb1cbff6843ec5677e387d"
+  version "0.2.1"
+  sha256 "c934eb22f60f935827348b0d2b7a2fe78fcd3ba96b2fb9ff497bfdebda74d309"
 
   url "https://github.com/weikxs/otpkeep/releases/download/v#{version}/otpkeep_#{version}_darwin_universal.dmg"
   name "OTPKeep"
@@ -17,7 +17,7 @@ cask "otpkeep" do
 
   app "OTPKeep.app"
 
-  # The app is not signed by Apple yet: without this, macOS refuses to open it the first time.
+  # The app is not signed by Apple (and will not be): without this, macOS refuses to open it the first time.
   postflight do
     system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{appdir}/OTPKeep.app"]
   end
